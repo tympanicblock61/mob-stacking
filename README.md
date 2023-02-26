@@ -13,6 +13,6 @@
 
 ### distance is the distance from one entity to another squared that it stacks
 
-### mobs
+## mobs
 
 ### mobs must be the minecraft:entityid format and if no mobs set then it defaults to all mobs
