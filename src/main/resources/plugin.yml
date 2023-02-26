@@ -1,0 +1,5 @@
+name: MobStacking
+version: '${version}'
+main: net.tympanicblock61.mobstacking.MobStacking
+api-version: 1.19
+authors: [ tympanicblock61 ]
