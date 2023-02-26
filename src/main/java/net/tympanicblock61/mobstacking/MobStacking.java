@@ -2,21 +2,17 @@ package net.tympanicblock61.mobstacking;
 
 import com.google.gson.*;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.World;
-import org.bukkit.entity.ArmorStand;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.entity.EntitySpawnEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -32,7 +28,7 @@ public final class MobStacking extends JavaPlugin implements Listener{
     public void onEnable() {
         getServer().getPluginManager().registerEvents(this, this);
         Gson gson = new Gson();
-        String filePath = Paths.get("").toAbsolutePath().toString() + "/mob-stacking.json";
+        String filePath = Paths.get("").toAbsolutePath() + "/mob-stacking.json";
 
         try (FileReader reader = new FileReader(filePath)) {
             // Load the JSON file into a custom MobStacking object
@@ -53,7 +49,7 @@ public final class MobStacking extends JavaPlugin implements Listener{
 
     @EventHandler
     public void onEntitySpawn(EntitySpawnEvent entityEvent) {
-        Boolean removedMob = false;
+        boolean removedMob = false;
         if (entityEvent.getEntity() instanceof LivingEntity && mobsList != null && mobsList.contains(entityEvent.getEntityType().getKey().toString()) || mobsList == null && entityEvent.getEntity() instanceof LivingEntity) {
             for (Entity entity : entityEvent.getEntity().getWorld().getEntities()) {
                 if (entity.getType() == entityEvent.getEntity().getType() && entity.getLocation().distanceSquared(entityEvent.getEntity().getLocation()) <= stackingDistance) {
@@ -85,7 +81,7 @@ public final class MobStacking extends JavaPlugin implements Listener{
             if (amount > 0) {
                 Entity newEntity = death.getEntity().getWorld().spawnEntity(death.getEntity().getLocation(), death.getEntity().getType());
                 if (newEntity instanceof LivingEntity) {
-                    ((LivingEntity) newEntity).setHealth(((LivingEntity) newEntity).getMaxHealth());
+                    ((LivingEntity) newEntity).setHealth(((LivingEntity) newEntity).getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
                     newEntity.setCustomNameVisible(true);
                     newEntity.setCustomName("%s%s%s:%s%s".formatted(ChatColor.RED, death.getEntity().getType().getKey().toString().split(":")[1], ChatColor.RESET, ChatColor.GREEN, amount));
                     newEntity.getPersistentDataContainer().set(new NamespacedKey(this, "amount"), PersistentDataType.INTEGER, amount);
